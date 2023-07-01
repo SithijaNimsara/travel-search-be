@@ -33,6 +33,10 @@ public class GalleryController {
     @Autowired
     GalleryService galleryService;
 
+    public GalleryController(GalleryService galleryService) {
+        this.galleryService = galleryService;
+    }
+
     @PostMapping(value = "/add-gallery-image/{hotelId}", consumes = { MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE })
     @PreAuthorize("hasRole('BUSINESS')")
     @ApiOperation(value = "Create post", nickname = "createPostOperation")

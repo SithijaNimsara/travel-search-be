@@ -23,6 +23,10 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
+    public LikeController(LikeService likeService) {
+        this.likeService = likeService;
+    }
+
     @PostMapping(value = "/add-like")
     @PreAuthorize("hasRole('USER')")
     @ApiOperation(value = "Add like to post by user ID", nickname = "addLikeOperation")

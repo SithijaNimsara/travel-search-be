@@ -1,9 +1,7 @@
 package com.sithija.travelsearch.controller;
 
-import com.sithija.travelsearch.dto.JwtResponse;
-import com.sithija.travelsearch.dto.LoginUserDto;
-import com.sithija.travelsearch.dto.UserInforDto;
-import com.sithija.travelsearch.dto.UserNoImageRequestDto;
+import com.sithija.travelsearch.dto.*;
+import com.sithija.travelsearch.entity.Comment;
 import com.sithija.travelsearch.entity.User;
 import com.sithija.travelsearch.error.HttpExceptionResponse;
 import com.sithija.travelsearch.security.JwtUtils;
@@ -23,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
+import java.io.IOException;
+
 import static javax.servlet.http.HttpServletResponse.*;
 
 @RestController
@@ -30,6 +30,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping(value = "/user-infor/{userId}")
     @PreAuthorize("hasRole('USER') or hasRole('BUSINESS')")
@@ -39,7 +43,7 @@ public class UserController {
             @ApiResponse(code = SC_UNAUTHORIZED, message = "Unauthorized", response = HttpExceptionResponse.class),
             @ApiResponse(code = SC_NOT_FOUND, message = "Unauthorized", response = HttpExceptionResponse.class),
             @ApiResponse(code = SC_INTERNAL_SERVER_ERROR, message = "Internal server error", response = HttpExceptionResponse.class)})
-    public ResponseEntity<UserInforDto> userById(
+    public ResponseEntity<UserProfileResponseDto> userById(
             @ApiParam(value = "Get the user by ID.", required = true) @PathVariable("userId") int userId) {
         return userService.getUserById(userId);
     }
@@ -51,7 +55,7 @@ public class UserController {
             @ApiResponse(code = SC_UNAUTHORIZED, message = "Unauthorized", response = HttpExceptionResponse.class),
             @ApiResponse(code = SC_NOT_FOUND, message = "Unauthorized", response = HttpExceptionResponse.class),
             @ApiResponse(code = SC_INTERNAL_SERVER_ERROR, message = "Internal server error", response = HttpExceptionResponse.class)})
-    private ResponseEntity<User> createNewUser(
+    public ResponseEntity createNewUser(
             @ApiParam(value = "User profile picture.") @RequestPart("image") MultipartFile image,
             @ApiParam(value = "User data for create user") @RequestPart("data") UserNoImageRequestDto data) {
         return userService.saveUser(image, data);

@@ -1,12 +1,10 @@
 package com.sithija.travelsearch.controller;
 
 import com.sithija.travelsearch.dto.CommentInforDto;
-import com.sithija.travelsearch.dto.LoginUserDto;
 import com.sithija.travelsearch.dto.SendCommentDto;
 import com.sithija.travelsearch.entity.Comment;
 import com.sithija.travelsearch.error.HttpExceptionResponse;
 import com.sithija.travelsearch.service.CommentService;
-import com.sithija.travelsearch.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -26,6 +24,10 @@ public class CommentController {
 
     @Autowired
     private CommentService commentService;
+
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
 
     @GetMapping(value = "/get-comment/{postId}")
     @PreAuthorize("hasRole('USER') or hasRole('BUSINESS')")

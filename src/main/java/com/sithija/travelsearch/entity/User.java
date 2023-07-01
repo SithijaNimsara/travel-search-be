@@ -20,10 +20,10 @@ public class User {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int userId;
 
-    @Column
+    @Column(unique = true)
     private String name;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     @Column

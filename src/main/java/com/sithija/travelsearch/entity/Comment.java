@@ -34,4 +34,15 @@ public class Comment {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private Post postId;
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "commentId=" + commentId +
+                ", comment='" + comment + '\'' +
+                ", time=" + time +
+                ", userId=" + userId +
+                ", postId=" + postId +
+                '}';
+    }
 }

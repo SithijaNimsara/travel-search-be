@@ -55,7 +55,7 @@ public class PostService {
                     .build();
 
 
-            Long likeCount = postRepository.countLikeByPostId(element.getPostId());
+            int likeCount = postRepository.countLikeByPostId(element.getPostId());
             BigInteger isLike = userRepository.checkLikeByUserIdAndPostId(userId, element.getPostId());
 
 

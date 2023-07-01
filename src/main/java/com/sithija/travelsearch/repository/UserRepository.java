@@ -15,6 +15,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByName(String name);
 
+    Optional<User> findByEmail(String email);
+
     @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM user_post WHERE user_id = :userId AND post_id = :postId", nativeQuery = true)
     BigInteger checkLikeByUserIdAndPostId(@Param("userId") int userId, @Param("postId") int postId);
 

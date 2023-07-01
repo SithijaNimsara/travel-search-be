@@ -3,6 +3,7 @@ package com.sithija.travelsearch.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Arrays;
 
 @Builder(toBuilder = true)
 @Getter
@@ -24,4 +25,12 @@ public class Gallery {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User userId;
 
+    @Override
+    public String toString() {
+        return "Gallery{" +
+                "galleryId=" + galleryId +
+                ", image=" + Arrays.toString(image) +
+                ", userId=" + userId +
+                '}';
+    }
 }

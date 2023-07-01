@@ -1,7 +1,6 @@
 package com.sithija.travelsearch.service;
 
 import com.sithija.travelsearch.dto.CommentInforDto;
-import com.sithija.travelsearch.dto.PostInforDto;
 import com.sithija.travelsearch.dto.SendCommentDto;
 import com.sithija.travelsearch.entity.Comment;
 import com.sithija.travelsearch.entity.Post;
@@ -59,9 +58,9 @@ public class CommentService {
                 .postId(post)
                 .userId(user)
                 .build();
-
         commentRepository.save(comment);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

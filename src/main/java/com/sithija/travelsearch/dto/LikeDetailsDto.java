@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @ApiModel(value="LikeDetailsDto")
 public class LikeDetailsDto {
 
-    private Long likeCount;
+    private int likeCount;
 
     private boolean liked;
 }

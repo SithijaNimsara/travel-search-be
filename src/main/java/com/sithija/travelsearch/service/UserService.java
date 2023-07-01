@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -41,11 +42,10 @@ public class UserService {
     @Autowired
     JwtUtils jwtUtils;
 
-    public ResponseEntity<UserInforDto> getUserById(int id) {
+    public ResponseEntity<UserProfileResponseDto> getUserById(int id) {
         try {
             User userInfor= userRepository.findById(id).get();
-            System.out.println("userInfor "+userInfor);
-            UserInforDto userInforDto = UserInforDto.builder()
+            UserProfileResponseDto userProfileResponseDto = UserProfileResponseDto.builder()
 
                     .name(userInfor.getName())
                     .email(userInfor.getEmail())
@@ -53,15 +53,22 @@ public class UserService {
                     .state(userInfor.getState())
                     .country(userInfor.getCountry())
                     .image(userInfor.getImage())
+                    .role(userInfor.getRole())
                     .build();
-            return new ResponseEntity<>(userInforDto, HttpStatus.OK);
+            return new ResponseEntity<>(userProfileResponseDto, HttpStatus.OK);
         }catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public ResponseEntity<User> saveUser(MultipartFile image, UserNoImageRequestDto createUser) {
+    public ResponseEntity saveUser(MultipartFile image, UserNoImageRequestDto createUser) {
         try {
+            if(userRepository.findByName(createUser.getName()).isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
+            }
+            if (userRepository.findByEmail(createUser.getEmail()).isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+            }
             User user = User.builder()
                     .name(createUser.getName())
                     .password(encoder.encode(createUser.getPassword()))
@@ -79,7 +86,7 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<?> loginUser(LoginUserDto loginUserDto) {
+    public ResponseEntity<JwtResponse> loginUser(LoginUserDto loginUserDto) {
 
         try{
             Authentication authentication = authenticationManager.authenticate(
@@ -90,16 +97,21 @@ public class UserService {
             String jwt = jwtUtils.generateJwtToken(authentication);
 
             UserInforDto user = (UserInforDto) authentication.getPrincipal();
-
-            return ResponseEntity.ok(new JwtResponse(user.getUserId(),
+            JwtResponse jwtResponse = new JwtResponse(user.getUserId(),
                     jwt,
                     user.getName(),
-                    user.getRole()));
+                    user.getRole());
+            return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
+//            return ResponseEntity.ok(new JwtResponse(user.getUserId(),
+//                    jwt,
+//                    user.getName(),
+//                    user.getRole()));
         } catch (Exception e) {
-            ErrorDto errorDto = new ErrorDto();
-            errorDto.setStatus(401);
-            errorDto.setMessage("Bad credentials");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDto);
+//            ErrorDto errorDto = new ErrorDto();
+//            errorDto.setStatus(401);
+//            errorDto.setMessage("Bad credentials");
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDto);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 

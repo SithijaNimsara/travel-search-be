@@ -39,19 +39,21 @@ public class GalleryService {
                     .orElseThrow(() -> new IllegalArgumentException("Hotel ID not found"));
             Page<Gallery> galleryPage = galleryRepository.findByUserId(user, pageable);
 
-            List<GalleryInforDto> galleryInforDtos = galleryPage.stream().map(element -> {
+            List<Gallery> galleryList = galleryPage.getContent();
+            long totalElements = galleryPage.getTotalElements();
 
+            if (totalElements>0 && totalElements>index) {
                 galleryInforDto = GalleryInforDto.builder()
-                        .galleryId(element.getGalleryId())
-                        .image(element.getImage())
-                        .hotelId(element.getUserId().getUserId())
+                        .galleryId(galleryList.get(0).getGalleryId())
+                        .image(galleryList.get(0).getImage())
+                        .hotelId(galleryList.get(0).getUserId().getUserId())
                         .currentPage(galleryPage.getNumber())
                         .totalItem(galleryPage.getTotalPages())
                         .build();
-                return galleryInforDto;
-            }).collect(Collectors.toList());
-
-            return new ResponseEntity<>(galleryInforDto, HttpStatus.OK);
+                return new ResponseEntity<>(galleryInforDto, HttpStatus.OK);
+            }else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
 
         }catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

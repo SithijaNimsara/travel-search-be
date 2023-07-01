@@ -13,7 +13,7 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query(value = "SELECT COUNT(*) FROM user_post WHERE post_id = :postId", nativeQuery = true)
-    Long countLikeByPostId(@Param("postId") int postId);
+    int countLikeByPostId(@Param("postId") int postId);
 
     @Query(value = "SELECT * FROM post WHERE hotel_id = :hotelId", nativeQuery = true)
     List<Post> findAllByHotelId(@Param("hotelId") int hotelId);

@@ -1,12 +1,7 @@
 package com.sithija.travelsearch.controller;
 
-//import com.travel.spring.entity.Post;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PathVariable;
 import com.sithija.travelsearch.dto.CreatePostDto;
 import com.sithija.travelsearch.dto.PostInforDto;
-import com.sithija.travelsearch.dto.UserInforDto;
-import com.sithija.travelsearch.dto.UserNoImageRequestDto;
 import com.sithija.travelsearch.error.HttpExceptionResponse;
 import com.sithija.travelsearch.service.PostService;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +27,9 @@ public class PostController {
     @Autowired
     PostService postService;
 
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
 
     @GetMapping(value = "/all-post/{userId}")
     @PreAuthorize("hasRole('USER') or hasRole('BUSINESS')")
