@@ -2,10 +2,9 @@ package com.sithija.travelsearch.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenerationTime;
+
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.sql.Timestamp;
 
 @Builder(toBuilder = true)
@@ -18,6 +17,7 @@ public class Comment {
 
     @Id
     @Column(name="comment_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int commentId;
 
     @Column
