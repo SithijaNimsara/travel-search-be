@@ -9,6 +9,7 @@ import com.sithija.travelsearch.service.UserService;
 import io.swagger.annotations.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -72,4 +75,16 @@ public class UserController {
         return userService.loginUser(loginUserDto);
     }
 
+
+    @GetMapping("/search-user")
+    @PreAuthorize("hasRole('USER')")
+    @ApiOperation(value = "Search user", nickname = "searchUserOperation")
+    @ApiResponses({
+            @ApiResponse(code = SC_BAD_REQUEST, message = "Bad request", response = HttpExceptionResponse.class),
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "Unauthorized", response = HttpExceptionResponse.class),
+            @ApiResponse(code = SC_NOT_FOUND, message = "Unauthorized", response = HttpExceptionResponse.class),
+            @ApiResponse(code = SC_INTERNAL_SERVER_ERROR, message = "Internal server error", response = HttpExceptionResponse.class)})
+    public ResponseDto<UserSearchResponseDto> searchUser(@RequestParam String name, @RequestParam int page) {
+        return userService.searchBusinessUser(name, page);
+    }
 }
