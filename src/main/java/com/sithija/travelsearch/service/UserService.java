@@ -6,25 +6,23 @@ import com.sithija.travelsearch.error.HttpExceptionResponse;
 import com.sithija.travelsearch.repository.UserRepository;
 import com.sithija.travelsearch.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -38,6 +36,8 @@ public class UserService {
     @Autowired
     AuthenticationManager authenticationManager;
 
+    @Autowired
+    PaginationDetailsDto paginationDetailsDto;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -114,5 +114,23 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
+
+    public ResponseDto<UserSearchResponseDto> searchBusinessUser(String name, int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+        Page<Object[]> pageObj = userRepository.getBusinessUserByName(name, pageable);
+
+        List<UserSearchResponseDto> dtos = pageObj.stream()
+                .map(record -> new UserSearchResponseDto(
+                        ((Number) record[0]).intValue(),
+                        (String) record[1],
+                        (byte[]) record[2]
+                ))
+                .collect(Collectors.toList());
+
+        paginationDetailsDto = new PaginationDetailsDto(pageObj.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
+        return new ResponseDto<>(dtos, paginationDetailsDto);
+    }
+
+
 
 }
